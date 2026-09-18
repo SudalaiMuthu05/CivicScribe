@@ -1,0 +1,34 @@
+fastapi
+uvicorn[standard]
+python-dotenv
+pydantic
+pydantic-settings
+
+# Supabase
+supabase
+
+# Cloudinary
+cloudinary
+
+# Groq
+groq
+
+# HTTP / API
+httpx
+requests
+
+# Image processing
+Pillow
+
+# Multipart file uploads
+python-multipart
+
+# Audio / speech processing
+pydub
+
+# AI / embeddings - we'll use this later for duplicate detection
+sentence-transformers
+numpy
+
+# Utilities
+python-dateutil

@@ -1,52 +1,76 @@
+import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 
-from config.settings import settings
-from routes.health_routes import router as health_router
-from routes.complaint_routes import router as complaint_router
-from routes.analysis_routes import router as analysis_router
-from routes.image_routes import router as image_router
+from config import APP_NAME
+from routes.health import router as health_router
+from routes.analyze import router as analyze_router
+from routes.facts import router as facts_router
+from routes.missing_info import router as missing_info_router
+from routes.draft import router as draft_router
+from routes.cases import router as cases_router
+from routes.validation import router as validation_router
+
 app = FastAPI(
-    title=settings.app_name,
-    version=settings.app_version,
-    description=(
-        "CivicScribe - AI-powered multilingual, "
-        "multimodal citizen grievance platform."
-    ),
-    debug=settings.debug,
+    title=APP_NAME,
+    description="AI-assisted RTI and Grievance drafting system",
+    version="1.0.0"
 )
-
-
-# ==========================================
-# CORS
-# ==========================================
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.cors_origins_list,
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
+app.include_router(
+    health_router,
+    prefix="/api"
+)
 
-# ==========================================
-# ROUTES
-# ==========================================
+app.include_router(
+    analyze_router,
+    prefix="/api"
+)
 
-app.include_router(health_router)
-app.include_router(complaint_router)
-app.include_router(analysis_router)
-app.include_router(image_router)
+app.include_router(
+    facts_router,
+    prefix="/api"
+)
 
-# ==========================================
-# ROOT
-# ==========================================
+app.include_router(
+    missing_info_router,
+    prefix="/api"
+)
+
+app.include_router(
+    cases_router,
+    prefix="/api"
+)
+
+app.include_router(
+    draft_router,
+    prefix="/api"
+)
+
+app.include_router(
+    validation_router,
+    prefix="/api"
+)
+
+STATIC_DIR = os.path.join(os.path.dirname(__file__), "static")
+if os.path.exists(STATIC_DIR):
+    app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
 @app.get("/")
-async def root():
+def root():
+    index_file = os.path.join(STATIC_DIR, "index.html")
+    if os.path.exists(index_file):
+        return FileResponse(index_file)
     return {
-        "application": settings.app_name,
-        "version": settings.app_version,
-        "message": "CivicScribe API is running.",
+        "message": "The Grievance Scribe API is running"
     }

@@ -1,12 +1,12 @@
-from .citizen import CitizenCreate, CitizenResponse
-from .complaint import ComplaintCreate, ComplaintResponse
-from .common import APIResponse, LocationData
+from pydantic import BaseModel
 
-__all__ = [
-    "APIResponse",
-    "LocationData",
-    "CitizenCreate",
-    "CitizenResponse",
-    "ComplaintCreate",
-    "ComplaintResponse",
-]
+
+class AnalyzeRequest(BaseModel):
+    text: str
+
+
+class AnalyzeResponse(BaseModel):
+    type: str
+    category: str
+    reason: str
+    requested_action_or_information: str
